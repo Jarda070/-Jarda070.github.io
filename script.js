@@ -16,11 +16,11 @@ const pointer = { x: -1000, y: -1000, active: false };
 const characters = "0123456789";
 
 function makeColumns() {
-  const spacing = window.innerWidth < 700 ? 24 : 20;
+  const spacing = window.innerWidth < 700 ? 20 : 16;
   columns = Array.from({ length: Math.ceil(width / spacing) }, (_, index) => ({
     x: index * spacing,
     y: Math.random() * height,
-    speed: 0.45 + Math.random() * 0.75,
+    speed: 0.65 + Math.random() * 0.9,
     spacing,
   }));
 }
@@ -42,11 +42,11 @@ function drawMatrix(timestamp) {
   lastFrame = timestamp;
 
   context.clearRect(0, 0, width, height);
-  context.font = "12px 'DM Mono', monospace";
+  context.font = "13px 'DM Mono', monospace";
   context.textAlign = "center";
 
   for (const column of columns) {
-    const trailLength = 11;
+    const trailLength = 16;
     for (let index = 0; index < trailLength; index += 1) {
       const y = column.y - index * column.spacing;
       if (y < -column.spacing || y > height + column.spacing) continue;
@@ -55,23 +55,23 @@ function drawMatrix(timestamp) {
       const distanceX = x - pointer.x;
       const distanceY = y - pointer.y;
       const distance = Math.hypot(distanceX, distanceY);
-      if (pointer.active && distance < 82) {
-        const force = ((82 - distance) / 82) ** 2;
+      if (pointer.active && distance < 100) {
+        const force = ((100 - distance) / 100) ** 2;
         const direction = distanceX === 0 ? (column.x < width / 2 ? -1 : 1) : Math.sign(distanceX);
-        x += direction * force * 22;
+        x += direction * force * 30;
       }
 
       const fade = 1 - index / trailLength;
       context.fillStyle = index === 0
-        ? `rgba(255, 112, 112, ${0.7 * fade})`
-        : `rgba(241, 67, 67, ${0.42 * fade})`;
+        ? `rgba(255, 112, 112, ${0.95 * fade})`
+        : `rgba(241, 67, 67, ${0.62 * fade})`;
       context.fillText(characters[Math.floor(Math.random() * characters.length)], x, y);
     }
 
     column.y += column.speed;
     if (column.y - trailLength * column.spacing > height && Math.random() > 0.975) {
       column.y = -Math.random() * height * 0.35;
-      column.speed = 0.45 + Math.random() * 0.75;
+      column.speed = 0.65 + Math.random() * 0.9;
     }
   }
 }
